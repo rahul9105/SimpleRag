@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta data -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Title -->  
+    <title>Simple RAG</title>
+
+    <!-- Favicon -->
+    <!-- <link rel="icon" href="../static/images/myPic1.jpeg" type="image/x-icon"> -->
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <link rel="stylesheet" href="../static/css/bootstrap.css.map">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.6/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Scripts -->
+    <script src="../static/js/script.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.6/dist/sweetalert2.all.min.js"></script>
+     <!-- <script src="../static/js/bootstrap.bundle.js" defer></script>
+        <script src="../static/js/bootstrap.min.js" defer></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <nav>
+        Simple Retrieval-Augmented Generation (RAG) Application with LangChain
+    </nav>
+    <main>
+        <div class="file-uploader">
+            <div class="uploader-header">
+                <h2 class="uploader-title">Upload Documents to Chat</h2>
+                <h4 class="file-completed-status">0 / 0 Files Uploaded</h4>
+            </div>
+            <div class="file-types">
+                Supported File Types:
+                <ul>
+                    <!-- <li><span class="file-type">pdf</span></li> -->
+                    <li><span class="file-type">txt</span></li>
+                    <li><span class="file-type">doc</span></li>
+                    <li><span class="file-type">docx</span></li>
+                    <!-- <li><span class="file-type">docm</span></li>
+                    <li><span class="file-type">dot</span></li>
+                    <li><span class="file-type">dotm</span></li>
+                    <li><span class="file-type">rtf</span></li>
+                    <li><span class="file-type">pptx</span></li>
+                    <li><span class="file-type">ppt</span></li>
+                    <li><span class="file-type">ppsx</span></li>
+                    <li><span class="file-type">potx</span></li>
+                    <li><span class="file-type">pptm</span></li> -->
+                </ul>
+            </div>
+            <ul class="file-list"></ul>
+            <div class="clear-list">
+                <span id="clear-list">Clear All</span>
+                <span id="delete-files">Delete All</span>
+            </div>
+            <div class="file-upload-box">
+                <h2 class="box-title">
+                    <span class="file-instruction">Drag files here or</span>
+                    <span class="file-browser-button">browse</span>
+                </h2>
+                <input type="file" class="file-browser-input" multiple accept=".txt, .doc, .docx" hidden>
+            </div>
+        </div>
+        <div class="commence-chat">
+            <button id="commence-chat">Commence Chat</button>
+        </div>
+    </main>
+</body>
+</html>
