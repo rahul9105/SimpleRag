@@ -6,6 +6,8 @@ const clearList = document.querySelector('.clear-list span#clear-list');
 const deleteFiles = document.querySelector('.clear-list span#delete-files');
 const filesCompletedStatus = document.querySelector(".file-completed-status");
 const commenceChat = document.querySelector(".commence-chat #commence-chat");
+// const chatLoadingProgress = document.getElementById('loading-progress');
+// const chatLoadingProgressBar = document.querySelector('.file-progress');
 // const allowedFileTypes = [
 //     "abw",
 //     "bmp",
@@ -53,10 +55,18 @@ const commenceChat = document.querySelector(".commence-chat #commence-chat");
 //     "xml",
 //     "zabw"
 // ];
-const allowedFileTypes = ['txt', 'doc', 'docx']
+const allowedFileTypes = ['txt', 'doc', 'docx', 'pdf']
 let askButton;
 let userQueryInput;
 let chatTextArea;
+
+const socket = io();
+let socketId = null;
+socket.connect('http://localhost:5000');
+socket.on('connect', () => {
+    socketId = socket.id;
+    console.log('Socket ID:', socketId);
+});
 
 function typeWriter(txt, qSelector, i=0) {
     let speed = 10;
@@ -317,11 +327,30 @@ fileBrowserInput.addEventListener('change', (event) => handelSelectedFiles([...e
 fileBrowserButton.addEventListener('click', () => fileBrowserInput.click());
 
 commenceChat.addEventListener('click', (event) => {
-    document.querySelector("main").innerHTML = `<div class="loader"></div><h4 class="mt-4">Analysing Uploaded Files...</h4>`;
+    document.querySelector("main").innerHTML = `<div class="loader" style="height:150px; width:150px;"></div>
+    <div class="mt-4">
+        <span id="loading-text" style="font-size:1.5rem;">Preparing...</span>
+        <span class="ms-2" id="loading-progress" style="font-size:1.5rem;">0%</span>
+    </div>
+    <div class="file-progress-bar my-4 w-75" style="background-color:lightgray !important;">
+        <div class="file-progress" style="width: 0%; height: 10px !important; background-color: blue !important;"></div>
+    </div>
+    <h4>Analysing Uploaded Files...</h4>`;
     let files;
+    const chatLoadingProgress = document.getElementById('loading-progress');
+    const chatLoadingProgressBar = document.querySelector('.file-progress');
+    const loadingText = document.getElementById('loading-text');
+    socket.on('progress', (data) => {
+        chatLoadingProgressBar.style.width = `${data.progress}%`;
+        chatLoadingProgress.innerText = `${data.progress}%`;
+        if (!data.message == '') {
+            loadingText.innerText = data.message;
+        }
+    })
     $.ajax({
         type: "POST",
-        url: "/simple-rag/commence-chat",
+        // url: "/simple-rag/commence-chat",
+        url: "/simple-rag/commence-chat/"+socketId,
         success: function (response) {
             if (response.status == 200) {
                 document.querySelector("main").innerHTML = response.htmlTemplate;
@@ -338,20 +367,22 @@ commenceChat.addEventListener('click', (event) => {
             }
         },
         complete: function () {
-            askButton = document.querySelector('#ask-button');
-            userQueryInput = document.querySelector('#user-input');
-            chatTextArea = document.querySelector(".chat-text-area");
-            typeWriter("How can I assist you today?", ".chat-text-area .bot-message #message");
-            attachAskButtonEventListener();
-            chatTextArea.scrollTop = chatTextArea.scrollHeight;
-            files.forEach((item) => {
-                let name = item.split('\\')[item.split('\\').length-1];
-                let html = `<li class="file">
-                    <span class="extension">${item.split('.')[name.split('.').length-1]}</span>
-                    <span class="name">${name.slice(5)}</span>
-                </li>`
-                document.querySelector("ul.uploaded-files").insertAdjacentHTML('afterbegin', html);
-            });
+            setTimeout(() => {
+                askButton = document.querySelector('#ask-button');
+                userQueryInput = document.querySelector('#user-input');
+                chatTextArea = document.querySelector(".chat-text-area");
+                typeWriter("How can I assist you today?", ".chat-text-area .bot-message #message");
+                attachAskButtonEventListener();
+                chatTextArea.scrollTop = chatTextArea.scrollHeight;
+                files.forEach((item) => {
+                    let name = item.split('\\')[item.split('\\').length-1];
+                    let html = `<li class="file">
+                        <span class="extension">${item.split('.')[name.split('.').length-1]}</span>
+                        <span class="name">${name.slice(5)}</span>
+                    </li>`
+                    document.querySelector("ul.uploaded-files").insertAdjacentHTML('afterbegin', html);
+                });
+            }, 1500);
         },
     })
 });

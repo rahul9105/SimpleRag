@@ -25,11 +25,15 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.6/dist/sweetalert2.all.min.js"></script>
      <!-- <script src="../static/js/bootstrap.bundle.js" defer></script>
         <script src="../static/js/bootstrap.min.js" defer></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.min.js" integrity="sha512-8ExARjWWkIllMlNzVg7JKq9RKWPlJABQUNq6YvAjE/HobctjH/NA+bSiDMDvouBVjp4Wwnf1VP1OEv7Zgjtuxw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
     <nav>
-        Simple Retrieval-Augmented Generation (RAG) Application with LangChain
+        <em>DocuChat - App for Chatting with Documents</em>
+        <small>
+            An app that allows you to chat with your documents using a simple RAG (Retrieval-Augmented Generation) approach.
+        </small>
     </nav>
     <main>
         <div class="file-uploader">
@@ -38,18 +42,18 @@
                 <h4 class="file-completed-status">0 / 0 Files Uploaded</h4>
             </div>
             <div class="file-types">
-                Supported File Types:
+                Supported&nbsp;File&nbsp;Types:
                 <ul>
-                    <!-- <li><span class="file-type">pdf</span></li> -->
+                    <li><span class="file-type">pdf</span></li>
                     <li><span class="file-type">txt</span></li>
                     <li><span class="file-type">doc</span></li>
                     <li><span class="file-type">docx</span></li>
+                    <!-- <li><span class="file-type">pptx</span></li> -->
+                    <!-- <li><span class="file-type">ppt</span></li> -->
                     <!-- <li><span class="file-type">docm</span></li>
                     <li><span class="file-type">dot</span></li>
                     <li><span class="file-type">dotm</span></li>
                     <li><span class="file-type">rtf</span></li>
-                    <li><span class="file-type">pptx</span></li>
-                    <li><span class="file-type">ppt</span></li>
                     <li><span class="file-type">ppsx</span></li>
                     <li><span class="file-type">potx</span></li>
                     <li><span class="file-type">pptm</span></li> -->
@@ -65,7 +69,7 @@
                     <span class="file-instruction">Drag files here or</span>
                     <span class="file-browser-button">browse</span>
                 </h2>
-                <input type="file" class="file-browser-input" multiple accept=".txt, .doc, .docx" hidden>
+                <input type="file" class="file-browser-input" multiple accept=".txt, .doc, .docx, .pdf" hidden>
             </div>
         </div>
         <div class="commence-chat">

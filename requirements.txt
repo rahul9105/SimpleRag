@@ -12,3 +12,6 @@ unstructured
 "unstructured[all-docs]"
 python-magic-bin
 flask
+flask[async]
+Flask-SocketIO
+langchain-chroma
