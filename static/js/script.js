@@ -55,7 +55,7 @@ const commenceChat = document.querySelector(".commence-chat #commence-chat");
 //     "xml",
 //     "zabw"
 // ];
-const allowedFileTypes = ['txt', 'doc', 'docx', 'pdf']
+const allowedFileTypes = ['txt', 'doc', 'docx', 'pdf', 'pptx']
 let askButton;
 let userQueryInput;
 let chatTextArea;

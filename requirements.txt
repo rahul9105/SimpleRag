@@ -9,7 +9,8 @@ langchain-ollama
 langchain-unstructured
 unstructured-client
 unstructured
-"unstructured[all-docs]"
+unstructured[all-docs]
+unstructured[pptx]
 python-magic-bin
 flask
 flask[async]

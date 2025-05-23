@@ -8,14 +8,12 @@ from unstructured.cleaners.core import clean_extra_whitespace
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_ollama import OllamaEmbeddings
 from langchain_ollama import OllamaLLM
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain.chains import create_retrieval_chain
-from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import ChatPromptTemplate
 import uuid
 from typing import Any
 from pydantic import BaseModel
 from unstructured.partition.pdf import partition_pdf
+from unstructured.partition.pptx import partition_pptx
 import unstructured_pytesseract
 from langchain_core.runnables import RunnablePassthrough
 from langchain.retrievers.multi_vector import MultiVectorRetriever
@@ -117,18 +115,29 @@ def process_pdf_files(files: list[str]) -> tuple:
     image_elements = [e for e in categorized_elements if e.type == "image"]
     return text_elements, table_elements, image_elements
 
-def summarize_pdf_elements(text_elements: list[str], table_elements: list[str], image_elements: list[str]) -> tuple:
-    prompt_text = """You are an assistant tasked with summarizing tables, images and text. 
-    Give a concise summary of the table, image or text. Table, image or text chunk: {element} """
-    prompt = ChatPromptTemplate.from_template(prompt_text)
-    summarize_chain = {"element": lambda x: x} | prompt | model | StrOutputParser()
-    texts = [i.text for i in text_elements]
-    text_summaries = summarize_chain.batch(texts, {"max_concurrency": 5})
-    tables = [i.text for i in table_elements]
-    table_summaries = summarize_chain.batch(tables, {"max_concurrency": 5})
-    images = [i.text for i in image_elements]
-    image_summaries = summarize_chain.batch(images, {"max_concurrency": 5})
-    return texts, text_summaries, tables, table_summaries, images, image_summaries
+def process_ppt_files(files: list[str]) -> tuple:
+    raw_ppt_elements = []
+    for file in files:
+        temp = partition_pptx(
+            filename=file,
+            include_page_breaks=False,
+            include_slide_notes=True,
+            infer_table_structure=True
+        )
+        raw_ppt_elements.append(temp)
+    raw_ppt_elements = list(chain.from_iterable(raw_ppt_elements))
+    categorized_elements = []
+    for element in raw_ppt_elements:
+        if str(type(element)).split('.')[-1].split('\'')[0]=='Image':
+            categorized_elements.append(Element(type="image", text=str(element)))
+        elif str(type(element)).split('.')[-1].split('\'')[0]=='Table':
+            categorized_elements.append(Element(type="table", text=str(element)))
+        else:
+            categorized_elements.append(Element(type="text", text=str(element)))
+    table_elements = [e for e in categorized_elements if e.type == "table"]
+    text_elements = [e for e in categorized_elements if e.type == "text"]
+    image_elements = [e for e in categorized_elements if e.type == "image"]
+    return text_elements, table_elements, image_elements
 
 
 
@@ -181,46 +190,111 @@ async def commence_chat(socket_id):
     if files:
         pdf_files = [os.path.join(BASE_DATA_PATH,file) for file in files if file.endswith('.pdf')]
         txt_doc_files = [os.path.join(BASE_DATA_PATH,file) for file in files if file.endswith('.txt') or file.endswith('.docx') or file.endswith('.doc')]
+        ppt_files = [os.path.join(BASE_DATA_PATH,file) for file in files if file.endswith('.pptx') or file.endswith('.ppt')]
         if txt_doc_files:
             txt_doc_texts = process_text_doc_files(txt_doc_files)
         else:
             txt_doc_texts = []
         socket.emit('progress', {'progress': 4, 'message': "Text files processed. Processing & summarizing pdf files..."}, to=socket_id)
-        print(f"Processing & summarizing pdf files...")
         if pdf_files:
             text_elements, table_elements, image_elements = process_pdf_files(pdf_files)
-            socket.emit('progress', {'progress': 20, 'message': "PDF files processed. Summarizing text..."}, to=socket_id)
+            socket.emit('progress', {'progress': 5, 'message': "PDF files processed. Summarizing text..."}, to=socket_id)
             prompt_text = """You are an assistant tasked with summarizing tables, images and text. 
             Give a concise summary of the table, image or text. Table, image or text chunk: {element} """
             prompt = ChatPromptTemplate.from_template(prompt_text)
             summarize_chain = {"element": lambda x: x} | prompt | model | StrOutputParser()
-            texts = [i.text for i in text_elements]
-            text_summaries = []
-            number_of_texts = len(texts)
-            for text in texts:
-                temp = summarize_chain.invoke({"element": text})
-                text_summaries.append(temp)
-                socket.emit('progress', {'progress': 20 + (65 * (len(text_summaries) / number_of_texts)), 'message': ''}, to=socket_id)
+            if text_elements:
+                texts_pdf = [i.text for i in text_elements]
+                text_summaries_pdf = []
+                number_of_texts = len(texts_pdf)
+                for text in texts_pdf:
+                    temp = summarize_chain.invoke({"element": text})
+                    text_summaries_pdf.append(temp)
+                    socket.emit('progress', {'progress': 5 + (40 * int(len(text_summaries_pdf) / number_of_texts)), 'message': ''}, to=socket_id)
+            else:
+                texts_pdf = []
+                text_summaries_pdf = []
             sleep(1)
-            socket.emit('progress', {'progress': 85, 'message': "Text summarized. Summarizing tables..."}, to=socket_id) # ******
-            tables = [i.text for i in table_elements]
-            table_summaries = summarize_chain.batch(tables, {"max_concurrency": 5})
-            socket.emit('progress', {'progress': 91, 'message': "Tables summarized. Summarizing images..."}, to=socket_id)
-            images = [i.text for i in image_elements]
-            image_summaries = summarize_chain.batch(images, {"max_concurrency": 5})
-            socket.emit('progress', {'progress': 93, 'message': "Images summarized."}, to=socket_id)
+            socket.emit('progress', {'progress': 45, 'message': "Text summarized. Summarizing tables..."}, to=socket_id)
+            if table_elements:
+                tables_pdf = [i.text for i in table_elements]
+                table_summaries_pdf = summarize_chain.batch(tables_pdf, {"max_concurrency": 5})
+            else:
+                tables_pdf = []
+                table_summaries_pdf = []
+            socket.emit('progress', {'progress': 47, 'message': "Tables summarized. Summarizing images..."}, to=socket_id)
+            if image_elements:
+                images_pdf = [i.text for i in image_elements]
+                image_summaries_pdf = summarize_chain.batch(images_pdf, {"max_concurrency": 5})
+            else:
+                images_pdf = []
+                image_summaries_pdf = []
+            socket.emit('progress', {'progress': 48, 'message': "Images summarized."}, to=socket_id)
             sleep(1)
-            socket.emit('progress', {'progress': 94, 'message': "PDF files processed and summarized."}, to=socket_id)
+            socket.emit('progress', {'progress': 49, 'message': "PDF files processed and summarized."}, to=socket_id)
         else:
-            texts = []
-            text_summaries = []
-            tables = []
-            table_summaries = []
-            images = []
-            image_summaries = []
-            socket.emit('progress', {'progress': 90, 'message': "No pdf files to process."}, to=socket_id)
-        texts_all = txt_doc_texts + texts
-        text_summaries_all = txt_doc_texts + text_summaries
+            texts_pdf = []
+            text_summaries_pdf = []
+            tables_pdf = []
+            table_summaries_pdf = []
+            images_pdf = []
+            image_summaries_pdf = []
+            socket.emit('progress', {'progress': 49, 'message': "No pdf files to process."}, to=socket_id)
+        socket.emit('progress', {'progress': 49 if pdf_files else 9, 'message': "Processing ppt files..."}, to=socket_id)
+        if ppt_files:
+            text_elements, table_elements, image_elements = process_ppt_files(ppt_files)
+            socket.emit('progress', {'progress': 50 if pdf_files else 10, 'message': "Ppt files processed. Summarizing text..."}, to=socket_id)
+            prompt_text = """You are an assistant tasked with summarizing tables, images and text.
+            Give a concise summary of the table, image or text. Table, image or text chunk: {element} """
+            prompt = ChatPromptTemplate.from_template(prompt_text)
+            summarize_chain = {"element": lambda x: x} | prompt | model | StrOutputParser()
+            starting_point = 50 if pdf_files else 10
+            gap = 40 if pdf_files else 80
+            if text_elements:
+                texts_ppt = [i.text for i in text_elements]
+                text_summaries_ppt = []
+                number_of_texts = len(texts_ppt)
+                for text in texts_ppt:
+                    temp = summarize_chain.invoke({"element": text})
+                    text_summaries_ppt.append(temp)
+                    # print(f"Progres: {starting_point + int(gap * (len(text_summaries_ppt) / number_of_texts))}% | Number of texts: {number_of_texts} | Texts summarized: {len(text_summaries_ppt)}")
+                    socket.emit('progress', {'progress': starting_point + int(gap * (len(text_summaries_ppt) / number_of_texts)), 'message': ''}, to=socket_id)
+            else:
+                texts_ppt = []
+                text_summaries_ppt = []
+            sleep(1)
+            socket.emit('progress', {'progress': starting_point+gap, 'message': "Text summarized. Summarizing tables..."}, to=socket_id)
+            if table_elements:
+                tables_ppt = [i.text for i in table_elements]
+                table_summaries_ppt = summarize_chain.batch(tables_ppt, {"max_concurrency": 5})
+            else:
+                tables_ppt = []
+                table_summaries_ppt = []
+            socket.emit('progress', {'progress': starting_point+gap+2, 'message': "Tables summarized. Summarizing images..."}, to=socket_id)
+            if image_elements:
+                images_ppt = [i.text for i in image_elements]
+                image_summaries_ppt = summarize_chain.batch(images_ppt, {"max_concurrency": 5})
+            else:
+                images_ppt = []
+                image_summaries_ppt = []
+            socket.emit('progress', {'progress': starting_point+gap+3, 'message': "Images summarized."}, to=socket_id)
+            sleep(1)
+            socket.emit('progress', {'progress': starting_point+gap+4, 'message': "Ppt files processed and summarized."}, to=socket_id)
+        else:
+            texts_ppt = []
+            text_summaries_ppt = []
+            tables_ppt = []
+            table_summaries_ppt = []
+            images_ppt = []
+            image_summaries_ppt = []
+            socket.emit('progress', {'progress': starting_point+gap+4, 'message': "No ppt files to process."}, to=socket_id)
+        socket.emit('progress', {'progress': starting_point+gap+5, 'message': "All files processed and summarized."}, to=socket_id)
+        texts_all = txt_doc_texts + texts_pdf + texts_ppt
+        text_summaries_all = txt_doc_texts + text_summaries_pdf + text_summaries_ppt
+        tables = tables_pdf + tables_ppt
+        table_summaries = table_summaries_pdf + table_summaries_ppt
+        images = images_pdf + images_ppt
+        image_summaries = image_summaries_pdf + image_summaries_ppt
         vectorstore = Chroma(collection_name="temp", embedding_function=OllamaEmbeddings(model="llama3.1"))
         store = InMemoryStore()
         id_key = "doc_id"
@@ -276,9 +350,9 @@ async def commence_chat(socket_id):
                 | model
                 | StrOutputParser()
             )
+        files = [file for file in files if len(file.split('.')) > 1]
     else:
         return jsonify({"message": "❌No files uploaded.", "status": 500})
-    files = [file for file in files if len(file.split('.')) > 1]
     return jsonify({"htmlTemplate": render_template('chat.html'), "status": 200, "message": "Chat initialized successfully!", "files": files})
 
 @app.route('/simple-rag/ask', methods=['POST'])
