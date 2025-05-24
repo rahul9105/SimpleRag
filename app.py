@@ -195,8 +195,8 @@ async def commence_chat(socket_id):
             txt_doc_texts = process_text_doc_files(txt_doc_files)
         else:
             txt_doc_texts = []
-        socket.emit('progress', {'progress': 4, 'message': "Text files processed. Processing & summarizing pdf files..."}, to=socket_id)
         if pdf_files:
+            socket.emit('progress', {'progress': 4, 'message': "Text files processed. Processing & summarizing pdf files..."}, to=socket_id)
             text_elements, table_elements, image_elements = process_pdf_files(pdf_files)
             socket.emit('progress', {'progress': 5, 'message': "PDF files processed. Summarizing text..."}, to=socket_id)
             prompt_text = """You are an assistant tasked with summarizing tables, images and text. 
@@ -240,16 +240,16 @@ async def commence_chat(socket_id):
             images_pdf = []
             image_summaries_pdf = []
             socket.emit('progress', {'progress': 49, 'message': "No pdf files to process."}, to=socket_id)
-        socket.emit('progress', {'progress': 49 if pdf_files else 9, 'message': "Processing ppt files..."}, to=socket_id)
+        starting_point = 50 if pdf_files else 10
+        gap = 40 if pdf_files else 80
         if ppt_files:
+            socket.emit('progress', {'progress': 49 if pdf_files else 9, 'message': "Processing ppt files..."}, to=socket_id)
             text_elements, table_elements, image_elements = process_ppt_files(ppt_files)
             socket.emit('progress', {'progress': 50 if pdf_files else 10, 'message': "Ppt files processed. Summarizing text..."}, to=socket_id)
             prompt_text = """You are an assistant tasked with summarizing tables, images and text.
             Give a concise summary of the table, image or text. Table, image or text chunk: {element} """
             prompt = ChatPromptTemplate.from_template(prompt_text)
             summarize_chain = {"element": lambda x: x} | prompt | model | StrOutputParser()
-            starting_point = 50 if pdf_files else 10
-            gap = 40 if pdf_files else 80
             if text_elements:
                 texts_ppt = [i.text for i in text_elements]
                 text_summaries_ppt = []

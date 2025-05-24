@@ -1,10 +1,12 @@
+<aside class="sidebar">
+    <div class="files">
+        <span id="files-heading">Uploaded Files</span>
+        <ul class="uploaded-files"></ul>
+    </div>
+</aside>
 <div class="chat-container">
     <div class="chat-header">
         <span>Chat with your documents</span>
-    </div>
-    <div class="files">
-        <span>Files:</span>
-        <ul class="uploaded-files"></ul>
     </div>
     <div class="chat-box">
         <div class="chat-text-area">
@@ -14,7 +16,7 @@
             </div>
         </div>
         <div class="user-input">
-            <input type="text" id="user-input" placeholder="Type your message here...">
+            <input type="search" id="user-input" placeholder="Type your message here..." spellcheck="false" data-ms-editor="true">
             <button id="ask-button">Ask</button>
         </div>
     </div>

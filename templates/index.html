@@ -30,15 +30,20 @@
 </head>
 <body>
     <nav>
-        <em>DocuChat - App for Chatting with Documents</em>
-        <small>
-            An app that allows you to chat with your documents using a simple RAG (Retrieval-Augmented Generation) approach.
-        </small>
+        <div class="nav-logo">
+            <img src="../static/images/myLogo.png" alt="Logo" class="logo">
+        </div>
+        <div class="nav-title">
+            DocuChat - App for Chatting with your Documents
+            <!-- <small>
+                An app that allows you to chat with your documents using a simple RAG (Retrieval-Augmented Generation) approach.
+            </small> -->
+        </div>
     </nav>
     <main>
         <div class="file-uploader">
             <div class="uploader-header">
-                <h2 class="uploader-title">Upload Documents to Chat</h2>
+                <h2 class="uploader-title">Upload Documents</h2>
                 <h4 class="file-completed-status">0 / 0 Files Uploaded</h4>
             </div>
             <div class="file-types">
@@ -49,14 +54,6 @@
                     <li><span class="file-type">doc</span></li>
                     <li><span class="file-type">docx</span></li>
                     <li><span class="file-type">pptx</span></li>
-                    <!-- <li><span class="file-type">ppt</span></li> -->
-                    <!-- <li><span class="file-type">docm</span></li>
-                    <li><span class="file-type">dot</span></li>
-                    <li><span class="file-type">dotm</span></li>
-                    <li><span class="file-type">rtf</span></li>
-                    <li><span class="file-type">ppsx</span></li>
-                    <li><span class="file-type">potx</span></li>
-                    <li><span class="file-type">pptm</span></li> -->
                 </ul>
             </div>
             <ul class="file-list"></ul>
@@ -71,10 +68,29 @@
                 </h2>
                 <input type="file" class="file-browser-input" multiple accept=".txt, .doc, .docx, .pdf, .pptx" hidden>
             </div>
-        </div>
-        <div class="commence-chat">
-            <button id="commence-chat">Commence Chat</button>
+            <div class="commence-chat">
+                <button id="commence-chat">Chat</button>
+            </div>
         </div>
     </main>
+    <footer>
+        <div class="contact-links">
+            <a href="https://www.linkedin.com/in/rahulbhowmik2205/" target="_blank">
+                <span class="social-icon"><i class="fa-brands fa-linkedin-in"></i></span>
+            </a>
+            <a href="https://github.com/rahul9105" target="_blank">
+                <span class="social-icon"><i class="fa-brands fa-github"></i></span>
+            </a>
+            <a href="https://x.com/RahulBhowmik91" target="_blank">
+                <span class="social-icon"><i class="fa-brands fa-twitter"></i></span>
+            </a>
+            <a href="mailto:rahul.bhowmik2002@gmail.com">
+                <span class="social-icon"><i class="fa-solid fa-envelope"></i></span>
+            </a>
+            <a href="https://drive.google.com/file/d/169QLWTjyG9kfzqjt2Sn9HsPofzvzyeaa/view" target="_blank">
+                <span class="social-icon"><i class="fa-solid fa-file"></i></span>
+            </a>
+        </div>
+    </footer>
 </body>
 </html>

@@ -5,6 +5,7 @@ const fileUploadBox = document.querySelector('.file-upload-box');
 const clearList = document.querySelector('.clear-list span#clear-list');
 const deleteFiles = document.querySelector('.clear-list span#delete-files');
 const filesCompletedStatus = document.querySelector(".file-completed-status");
+const commenceChatOuter = document.querySelector(".commence-chat");
 const commenceChat = document.querySelector(".commence-chat #commence-chat");
 // const chatLoadingProgress = document.getElementById('loading-progress');
 // const chatLoadingProgressBar = document.querySelector('.file-progress');
@@ -174,6 +175,7 @@ const handelFilesUploading = (file, index) => {
             fileList.querySelectorAll('.file-status')[index].innerText = "Error";
         }
         if (parseInt(filesCompletedStatus.innerText.split('/')[0].trim()) == parseInt(filesCompletedStatus.innerText.split('/')[1].split(' ')[1].trim())) {
+            commenceChatOuter.classList.add('visible');
             commenceChat.classList.add('visible');
         }
     })
@@ -203,14 +205,14 @@ const createFileItemHtml = (file, index) => {
     const {name, size} = file;
     const extension = name.split('.').pop();
     return `<li class="file-item">
-                    <div class="file-extension">${extension}</div>
+                    <div class="file-extension">.${extension}</div>
                     <div class="file-content-wrapper">
                         <div class="file-content">
                             <div class="file-details">
                                 <h5 class="file-name">${name.length > 45 ? name.substr(0, 42)+'...' : name}</h5>
                                 <div class="file-info">
                                     <small class="file-size">0 / ${formatSize(size)}</small>
-                                    <small class="file-divider">.</small>
+                                    <small class="file-divider"><i class="fa-solid fa-circle"></i></small>
                                     <small class="file-status${allowedFileTypes.includes(extension.toLowerCase()) ? '' : ' not-allowed'}">${allowedFileTypes.includes(extension.toLowerCase()) ? 'Uploading...' : 'Not Allowed'}</small>
                                 </div>
                             </div>
@@ -231,7 +233,6 @@ const handelSelectedFiles = (files) => {
     document.querySelector(".clear-list").classList.add("visible");
     filesCompletedStatus.innerText = `0 / ${files.length} Files Uploaded`;
     fileUploadBox.classList.add('hidden');
-    // commenceChat.classList.add('visible');
 
     files.forEach((file, index) => {
         const fileItemHtml = createFileItemHtml(file, index);
@@ -248,18 +249,21 @@ fileUploadBox.addEventListener('drop', (event) => {
     handelSelectedFiles([...event.dataTransfer.files]);
     fileUploadBox.classList.remove('active');
     fileUploadBox.querySelector(".file-instruction").innerText = "Drag files here or";
+    fileUploadBox.querySelector(".file-browser-button").innerText = "browse";
 });
 
 fileUploadBox.addEventListener('dragover', (event) => {
     event.preventDefault();
     fileUploadBox.classList.add('active');
-    fileUploadBox.querySelector(".file-instruction").innerText = "Release to upload file or";
+    fileUploadBox.querySelector(".file-instruction").innerText = "Release to upload file";
+    fileUploadBox.querySelector(".file-browser-button").innerText = ""
 });
 
 fileUploadBox.addEventListener('dragleave', (event) => {
     event.preventDefault();
     fileUploadBox.classList.remove('active');
     fileUploadBox.querySelector(".file-instruction").innerText = "Drag files here or";
+    fileUploadBox.querySelector(".file-browser-button").innerText = "browse";
 });
 
 clearList.addEventListener('click', (event) => {
@@ -269,6 +273,7 @@ clearList.addEventListener('click', (event) => {
     fileBrowserInput.value = "";
     fileUploadBox.classList.remove('active');
     fileUploadBox.querySelector(".file-instruction").innerText = "Drag files here or";
+    fileUploadBox.querySelector(".file-browser-button").innerText = "browse";
     Swal.fire({
         icon: 'success',
         title: 'List Cleared',
@@ -285,7 +290,9 @@ deleteFiles.addEventListener('click', (event) => {
     fileBrowserInput.value = "";
     fileUploadBox.classList.remove('active');
     fileUploadBox.querySelector(".file-instruction").innerText = "Drag files here or";
+    fileUploadBox.querySelector(".file-browser-button").innerText = "browse";
     filesCompletedStatus.innerText = `0 / 0 Files Uploaded`;
+    commenceChatOuter.classList.remove('visible');
     commenceChat.classList.remove('visible');
     $.ajax({
         type: "POST",
@@ -327,15 +334,16 @@ fileBrowserInput.addEventListener('change', (event) => handelSelectedFiles([...e
 fileBrowserButton.addEventListener('click', () => fileBrowserInput.click());
 
 commenceChat.addEventListener('click', (event) => {
-    document.querySelector("main").innerHTML = `<div class="loader" style="height:150px; width:150px;"></div>
+    document.querySelector("main").classList.add('chat-main');
+    document.querySelector("main").innerHTML = `<div class="loader-div"><div class="loader" style="height:150px; width:150px;"></div>
     <div class="mt-4">
         <span id="loading-text" style="font-size:1.5rem;">Preparing...</span>
         <span class="ms-2" id="loading-progress" style="font-size:1.5rem;">0%</span>
     </div>
     <div class="file-progress-bar my-4 w-75" style="background-color:lightgray !important;">
-        <div class="file-progress" style="width: 0%; height: 10px !important; background-color: blue !important;"></div>
+        <div class="file-progress" style="width: 0%;"></div>
     </div>
-    <h4>Analysing Uploaded Files...</h4>`;
+    <h4>Analysing Uploaded Files...</h4></div>`;
     let files;
     const chatLoadingProgress = document.getElementById('loading-progress');
     const chatLoadingProgressBar = document.querySelector('.file-progress');
