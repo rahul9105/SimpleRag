@@ -71,18 +71,18 @@ def process_text_doc_files(files: list[str]):
     return texts
 
 def process_pdf_files(files: list[str]) -> tuple:
-    raw_pdf_elements = []
+    # raw_pdf_elements = []
     raw_pdf_elements2 = []
     for file in files:
-        temp = partition_pdf(
-            filename=file,
-            strategy='hi_res',
-            extract_images_in_pdf=True,
-            extract_image_block_to_payload=False,
-            extract_image_block_types=['Image', 'Table'],
-            extract_image_block_output_dir=OUTPUT_DIR,
-        )
-        raw_pdf_elements.append(temp)
+        # temp = partition_pdf(
+        #     filename=file,
+        #     strategy='hi_res',
+        #     extract_images_in_pdf=True,
+        #     extract_image_block_to_payload=False,
+        #     extract_image_block_types=['Image', 'Table'],
+        #     extract_image_block_output_dir=OUTPUT_DIR,
+        # )
+        # raw_pdf_elements.append(temp)
         temp = partition_pdf(
             filename=file,
             extract_image_block_types=['Image', 'Table'],
@@ -95,14 +95,14 @@ def process_pdf_files(files: list[str]) -> tuple:
             image_output_dir_path=OUTPUT_DIR,
         )
         raw_pdf_elements2.append(temp)
-    raw_pdf_elements = list(chain.from_iterable(raw_pdf_elements))
+    # raw_pdf_elements = list(chain.from_iterable(raw_pdf_elements))
     raw_pdf_elements2 = list(chain.from_iterable(raw_pdf_elements2))
     categorized_elements = []
-    for element in raw_pdf_elements:
-        if str(type(element)).split('.')[-1].split('\'')[0]=='Image':
-            categorized_elements.append(Element(type="image", text=str(element)))
-        elif str(type(element)).split('.')[-1].split('\'')[0]=='Table':
-            categorized_elements.append(Element(type="table", text=str(element)))
+    # for element in raw_pdf_elements:
+    #     if str(type(element)).split('.')[-1].split('\'')[0]=='Image':
+    #         categorized_elements.append(Element(type="image", text=str(element)))
+    #     elif str(type(element)).split('.')[-1].split('\'')[0]=='Table':
+    #         categorized_elements.append(Element(type="table", text=str(element)))
     for element in raw_pdf_elements2:
         if str(type(element)).split('.')[-1].split('\'')[0]=='Image':
             categorized_elements.append(Element(type="image", text=str(element)))
@@ -193,10 +193,11 @@ async def commence_chat(socket_id):
         ppt_files = [os.path.join(BASE_DATA_PATH,file) for file in files if file.endswith('.pptx') or file.endswith('.ppt')]
         if txt_doc_files:
             txt_doc_texts = process_text_doc_files(txt_doc_files)
+            socket.emit('progress', {'progress': 4, 'message': "Text files processed."}, to=socket_id)
         else:
             txt_doc_texts = []
         if pdf_files:
-            socket.emit('progress', {'progress': 4, 'message': "Text files processed. Processing & summarizing pdf files..."}, to=socket_id)
+            socket.emit('progress', {'progress': 4, 'message': "Processing & summarizing pdf files..."}, to=socket_id)
             text_elements, table_elements, image_elements = process_pdf_files(pdf_files)
             socket.emit('progress', {'progress': 5, 'message': "PDF files processed. Summarizing text..."}, to=socket_id)
             prompt_text = """You are an assistant tasked with summarizing tables, images and text. 

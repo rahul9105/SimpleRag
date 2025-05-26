@@ -13,7 +13,8 @@
 }
 
 body {
-    background: linear-gradient(var(--light-color), var(--dark-color));
+    /* background: linear-gradient(var(--light-color), var(--dark-color)); */
+    background: var(--dark-color);
 }
 
 body.chat-main {
@@ -23,8 +24,8 @@ body.chat-main {
 nav {
     height: 80px;
     padding: 5px auto;
-    background-color: var(--dark-color);
-    color: var(--text-color-primary);
+    background-color: var(--light-color);
+    color: var(--text-color-secondary);
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -48,6 +49,8 @@ nav img {
     height: 50px;
     width: 50px;
     border-radius: 50%;
+    padding: 2px;
+    background: var(--dark-color);
 }
 
 .nav-title {
@@ -71,12 +74,13 @@ main {
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    background: var(--dark-color);
     /* background: #5145ba; */
 }
 
 footer {
     height: 40px;
-    background: var(--dark-color);
+    background: var(--light-color);
 }
 
 footer .contact-links {
@@ -89,7 +93,7 @@ footer .contact-links {
 }
 
 footer .contact-links .social-icon {
-    color: var(--text-color-primary);
+    color: var(--text-color-secondary);
     font-size: 1.2rem;
     cursor: pointer;
     transition: color 0.3s ease;
@@ -98,17 +102,17 @@ footer .contact-links .social-icon {
 .file-uploader {
     width: 700px;
     /* background: var(--light-color); */
-    background: var(--medium-color);
+    background: var(--dark-color);
     color: var(--text-color-primary);
     border-radius: 5px;
-    border: 2px solid var(--dark-color);
+    border: 2px solid var(--light-color);
     /* box-shadow: 0 4px 8px var(--light-color); */
 }
 
 .file-uploader .uploader-header {
     display: flex;
     padding: 20px;
-    background: var(--dark-color);
+    background: var(--light-color);
     justify-content: space-between;
     align-items: center;
     border-radius: 5px 5px 0 0;
@@ -118,13 +122,13 @@ footer .contact-links .social-icon {
     font-size: 1.2rem;
     font-weight: 700;
     text-transform: capitalize;
-    color: var(--text-color-primary);
+    color: var(--text-color-secondary);
 }
 
 .uploader-header .file-completed-status {
     font-size: 1rem;
     font-weight: 500;
-    color: var(--text-color-primary) !important;
+    color: var(--text-color-secondary) !important;
 }
 
 .file-types {
@@ -135,7 +139,7 @@ footer .contact-links .social-icon {
     margin: 10px 20px;
     font-size: 1.1rem;
     font-weight: 600;
-    color: var(--text-color-secondary);
+    color: var(--text-color-primary);
 }
 
 .file-types p, .file-types span {
@@ -163,15 +167,16 @@ footer .contact-links .social-icon {
 }
 
 .file-types .file-type {
-    color: var(--text-color-primary);
+    color: var(--text-color-secondary);
     padding: 4px 6px;
     display: flex;
     text-transform: uppercase;
     justify-content: center;
     align-items: center;
     border-radius: 5px;
-    background: var(--dark-color);
-    font-size: 0.7rem;
+    background: var(--light-color);
+    font-size: 0.8rem;
+    font-weight: 600;
 }
 
 .file-uploader .file-list {
@@ -197,13 +202,13 @@ footer .contact-links .social-icon {
 .file-list .file-item .file-extension {
     height: 50px;
     width: 50px;
-    color: var(--text-color-primary);
+    color: var(--text-color-secondary);
     display: flex;
     text-transform: uppercase;
     justify-content: center;
     align-items: center;
     border-radius: 15px;
-    background: var(--dark-color);
+    background: var(--light-color);
     font-size: 1rem;
     font-weight: 600;
     /* border: 1px solid var(--dark-color); */
@@ -222,7 +227,7 @@ footer .contact-links .social-icon {
 .file-list .file-item .file-name {
     font-size: 1rem;
     font-weight: 600;
-    color: var(--text-color-secondary);
+    color: var(--text-color-primary);
 }
 
 .file-list .file-item .file-info {
@@ -234,7 +239,7 @@ footer .contact-links .social-icon {
 }
 
 .file-list .file-item .file-info small {
-    color: var(--text-color-secondary);
+    color: var(--text-color-primary);
     margin-top: 5px;
     display: block;
     font-size: 0.9rem;
@@ -246,11 +251,11 @@ footer .contact-links .social-icon {
 }
 
 .bx {
-    color: var(--text-color-secondary) !important;
+    color: var(--text-color-primary) !important;
 }
 
 .file-list .file-item .file-info .file-status {
-    color: var(--text-color-secondary);
+    color: var(--text-color-primary);
 }
 
 .file-list .file-item .file-info .file-status.not-allowed {
@@ -282,12 +287,12 @@ footer .contact-links .social-icon {
     width: 0%;
     height: inherit;
     border-radius: inherit;
-    background: var(--dark-color);
+    background: var(--light-color);
     transition: width 0.3s ease-in-out;
 }
 
 .file-progress {
-    background: var(--dark-color) !important;
+    background: var(--light-color) !important;
     height: 10px;
     border-radius: 2px;
 }
@@ -308,19 +313,19 @@ footer .contact-links .social-icon {
 }
 
 .file-uploader .clear-list.visible #clear-list, .file-uploader .clear-list.visible #delete-files {
-    color: var(--text-color-secondary);
+    color: var(--text-color-primary);
 }
 
 .file-uploader .clear-list span {
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--text-color-primary);
+    color: var(--text-color-secondary);
     cursor: pointer;
     text-decoration: underline;
 }
 
 .file-uploader .clear-list span#clear-list {
-    color: var(--text-color-primary);
+    color: var(--text-color-secondary);
 }
 
 .file-uploader .file-upload-box.hidden {
@@ -329,7 +334,7 @@ footer .contact-links .social-icon {
 
 .file-uploader .file-upload-box {
     margin: 10px 20px 20px;
-    border: 3px dashed var(--dark-color);
+    border: 3px dashed var(--light-color);
     border-radius: 5px;
     min-height: 250px;
     display: flex;
@@ -340,7 +345,7 @@ footer .contact-links .social-icon {
 
 .file-uploader .file-upload-box.active {
     border: 2px solid var(--light-color);
-    background: var(--dark-color);
+    background: var(--light-color);
 }
 
 .file-uploader .file-upload-box.active .file-instruction {
@@ -350,7 +355,7 @@ footer .contact-links .social-icon {
 .file-uploader .file-upload-box .box-title {
     font-size: 1.05rem;
     font-weight: 500;
-    color: var(--text-color-secondary);
+    color: var(--text-color-primary);
 }
 
 .file-uploader .file-upload-box.active .box-title {
@@ -458,7 +463,7 @@ footer .contact-links .social-icon {
   content: "";
   position: absolute;
   inset: 0;
-  background: conic-gradient(#0000 35%,var(--text-color-secondary),#0000 65%);
+  background: conic-gradient(#0000 35%,var(--text-color-primary),#0000 65%);
   animation: l8-1 2s linear infinite;
 }
 @keyframes l8-0 {
@@ -469,7 +474,7 @@ footer .contact-links .social-icon {
 }
 
 h4, #loading-text, #loading-progress {
-    color: var(--text-color-secondary) !important;
+    color: var(--text-color-primary) !important;
 }
 
 #loading-text, #loading-progress {
@@ -727,4 +732,71 @@ h4, #loading-text, #loading-progress {
     border-bottom: 5px solid var(--medium-color);
     border-top: 0;
     border-right: 5px solid var(--medium-color); */
+}
+
+
+/* Supported Files Table */
+.table-container {
+    height: 100vh;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;
+}
+
+.container-inner {
+    width: 50%;
+    overflow:hidden;
+    overflow-y: scroll;
+    height: 60vh;
+    scrollbar-color: rgba(81, 69, 186, 0.2) transparent;
+    scrollbar-width: thin;
+    box-shadow: 0 4px 8px rgba(81, 69, 186, 0.2);
+}
+
+.table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 5px;
+}
+
+.table-container table thead {
+    background: #333;
+    color: var(--text-color-primary);
+    font-size: 1.2rem;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.table-container table thead th {
+    padding: 10px;
+    text-align: left;
+}
+
+.table-container table tbody {
+    background: var(--text-color-primary);
+    color: #333;
+}
+
+.table-container table tbody tr {
+    border-bottom: 1px solid var(--text-color-primary);
+}
+
+.table-container table tbody tr:hover {
+    background: rgba(81, 69, 186, 0.1);
+    color: #333;
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+.table-container table tbody tr td {
+    padding: 10px;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    gap: 10px;
 }

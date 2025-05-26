@@ -1,5 +1,5 @@
 const fileList = document.querySelector('.file-list');
-const fileBrowserButton = document.querySelector('.file-browser-button');
+const fileBrowserButton = document.querySelector(".file-browser-button");
 const fileBrowserInput = document.querySelector('.file-browser-input');
 const fileUploadBox = document.querySelector('.file-upload-box');
 const clearList = document.querySelector('.clear-list span#clear-list');
@@ -249,21 +249,21 @@ fileUploadBox.addEventListener('drop', (event) => {
     handelSelectedFiles([...event.dataTransfer.files]);
     fileUploadBox.classList.remove('active');
     fileUploadBox.querySelector(".file-instruction").innerText = "Drag files here or";
-    fileUploadBox.querySelector(".file-browser-button").innerText = "browse";
+    fileBrowserButton.innerHTML = `<u><em>browse</em></u>`;
 });
 
 fileUploadBox.addEventListener('dragover', (event) => {
     event.preventDefault();
     fileUploadBox.classList.add('active');
     fileUploadBox.querySelector(".file-instruction").innerText = "Release to upload file";
-    fileUploadBox.querySelector(".file-browser-button").innerText = ""
+    fileBrowserButton.innerText = ""
 });
 
 fileUploadBox.addEventListener('dragleave', (event) => {
     event.preventDefault();
     fileUploadBox.classList.remove('active');
     fileUploadBox.querySelector(".file-instruction").innerText = "Drag files here or";
-    fileUploadBox.querySelector(".file-browser-button").innerText = "browse";
+    fileBrowserButton.innerHTML = `<u><em>browse</em></u>`;
 });
 
 clearList.addEventListener('click', (event) => {
@@ -273,7 +273,7 @@ clearList.addEventListener('click', (event) => {
     fileBrowserInput.value = "";
     fileUploadBox.classList.remove('active');
     fileUploadBox.querySelector(".file-instruction").innerText = "Drag files here or";
-    fileUploadBox.querySelector(".file-browser-button").innerText = "browse";
+    fileBrowserButton.innerHTML = `<u><em>browse</em></u>`;
     Swal.fire({
         icon: 'success',
         title: 'List Cleared',
@@ -290,7 +290,7 @@ deleteFiles.addEventListener('click', (event) => {
     fileBrowserInput.value = "";
     fileUploadBox.classList.remove('active');
     fileUploadBox.querySelector(".file-instruction").innerText = "Drag files here or";
-    fileUploadBox.querySelector(".file-browser-button").innerText = "browse";
+    fileBrowserButton.innerHTML = `<u><em>browse</em></u>`;
     filesCompletedStatus.innerText = `0 / 0 Files Uploaded`;
     commenceChatOuter.classList.remove('visible');
     commenceChat.classList.remove('visible');
